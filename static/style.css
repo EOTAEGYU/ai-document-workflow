@@ -1,0 +1,246 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  margin: 0;
+  color: #1f2937;
+  background: #f9fafb;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #111827;
+  color: white;
+}
+
+nav .brand {
+  font-weight: 600;
+  margin-right: auto;
+}
+
+nav a {
+  color: #d1d5db;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+nav a:hover,
+nav a.active {
+  color: white;
+}
+
+main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+h1 {
+  font-size: 1.4rem;
+  margin: 0 0 1rem;
+}
+
+/* Upload page */
+
+#dropzone {
+  border: 2px dashed #9ca3af;
+  border-radius: 8px;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: #6b7280;
+  cursor: pointer;
+  background: white;
+}
+
+#dropzone.dragover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: #eff6ff;
+}
+
+#file-input {
+  display: none;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 1.5rem;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+th {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+tbody tr[data-href] {
+  cursor: pointer;
+}
+
+tbody tr[data-href]:hover {
+  background: #f3f4f6;
+}
+
+/* Status badge */
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: white;
+}
+
+.badge-UPLOADED {
+  background: #9ca3af;
+}
+
+.badge-PROCESSING {
+  background: #3b82f6;
+}
+
+.badge-OCR_COMPLETED {
+  background: #8b5cf6;
+}
+
+.badge-COMPLETED {
+  background: #22c55e;
+}
+
+.badge-FAILED {
+  background: #ef4444;
+}
+
+/* Search form */
+
+.search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-bar input[type="text"] {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.search-bar select,
+.search-bar button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: white;
+}
+
+.search-bar button {
+  background: #111827;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+}
+
+.pagination a {
+  color: #111827;
+  text-decoration: none;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.pagination .disabled {
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  pointer-events: none;
+}
+
+/* Detail page */
+
+.meta-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: #4b5563;
+  font-size: 0.9rem;
+}
+
+.btn-download {
+  margin-left: auto;
+  padding: 0.35rem 0.9rem;
+  background: #111827;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+}
+
+.btn-download:hover {
+  background: #374151;
+}
+
+.error-box {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.panel {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.panel h2 {
+  font-size: 1rem;
+  margin: 0 0 0.75rem;
+  color: #374151;
+}
+
+.extracted-text {
+  white-space: pre-wrap;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.extracted-text mark {
+  background: #fde68a;
+}
+
+.recent-uploads h2 {
+  font-size: 1rem;
+  color: #374151;
+}

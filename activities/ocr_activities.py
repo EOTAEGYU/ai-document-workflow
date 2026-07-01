@@ -8,6 +8,7 @@ from temporalio import activity
 from shared.types import DocumentProcessingInput
 
 OCR_LANGUAGES = "kor+eng"
+PDF_RENDER_DPI = 300
 
 
 @dataclass
@@ -21,7 +22,7 @@ def extract_text(input: DocumentProcessingInput) -> ExtractTextResult:
     extension = input.file_type.lower().lstrip(".")
 
     if extension == "pdf":
-        pages = convert_from_path(input.file_path)
+        pages = convert_from_path(input.file_path, dpi=PDF_RENDER_DPI)
         page_texts = []
         for page_no, page in enumerate(pages, start=1):
             page_texts.append(pytesseract.image_to_string(page, lang=OCR_LANGUAGES))

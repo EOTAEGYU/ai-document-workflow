@@ -24,3 +24,19 @@ class DocumentDetailResponse(BaseModel):
     summary: str | None
     created_at: datetime
     updated_at: datetime
+
+
+class DocumentListItem(BaseModel):
+    document_id: int
+    file_name: str
+    file_type: str
+    status: str
+    page_count: int | None
+    created_at: datetime
+
+
+class DocumentListResponse(BaseModel):
+    items: list[DocumentListItem]
+    total: int
+    page: int
+    page_size: int

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}문서 목록 - AI Document Workflow{% endblock %}
+
+{% block content %}
+<h1>문서 목록</h1>
+
+<form class="search-bar" method="get" action="/ui/documents">
+  <input type="text" name="q" value="{{ q or '' }}" placeholder="파일명 또는 본문 내용 검색" />
+  <select name="status">
+    <option value="">전체 상태</option>
+    {% for s in status_options %}
+    <option value="{{ s }}" {% if s == status %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">검색</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>파일명</th>
+      <th>타입</th>
+      <th>페이지</th>
+      <th>상태</th>
+      <th>업로드 시각</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doc in items %}
+    <tr data-href="/ui/documents/{{ doc.id }}{% if q %}?q={{ q }}{% endif %}">
+      <td>{{ doc.file_name }}</td>
+      <td>{{ doc.file_type }}</td>
+      <td>{{ doc.page_count or '-' }}</td>
+      <td><span class="badge badge-{{ doc.status }}">{{ doc.status }}</span></td>
+      <td>{{ (doc.created_at | to_kst).strftime('%Y-%m-%d %H:%M') }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">검색 결과가 없습니다.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<div class="pagination">
+  {% if page > 1 %}
+  <a href="{{ build_page_url(page - 1) }}">◀ 이전</a>
+  {% else %}
+  <span class="disabled">◀ 이전</span>
+  {% endif %}
+  <span>{{ page }} / {{ total_pages }}</span>
+  {% if page < total_pages %}
+  <a href="{{ build_page_url(page + 1) }}">다음 ▶</a>
+  {% else %}
+  <span class="disabled">다음 ▶</span>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.querySelectorAll("tbody tr[data-href]").forEach((row) => {
+    row.addEventListener("click", () => {
+      window.location.href = row.dataset.href;
+    });
+  });
+</script>
+{% endblock %}

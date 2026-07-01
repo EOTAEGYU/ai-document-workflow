@@ -2,12 +2,15 @@ import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from temporalio.client import Client
 
 from app.api.documents import router as documents_router
 from app.config import STORAGE_DIR, TEMPORAL_ADDRESS, TEMPORAL_TASK_QUEUE
 from app.database import Base, engine
 from app.models import Document  # noqa: F401 (ensures table metadata is registered)
+from app.web import router as web_router
 
 
 @asynccontextmanager
@@ -23,8 +26,15 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="AI Document Workflow", lifespan=lifespan)
 app.include_router(documents_router)
+app.include_router(web_router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/")
+def root() -> RedirectResponse:
+    return RedirectResponse(url="/ui/upload")

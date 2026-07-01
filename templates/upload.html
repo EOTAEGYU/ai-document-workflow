@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}업로드 - AI Document Workflow{% endblock %}
+
+{% block content %}
+<h1>문서 업로드</h1>
+
+<div id="dropzone">
+  파일을 여기로 드래그하거나 클릭해서 선택하세요<br />
+  <small>PDF, PNG, JPG · 여러 개 선택 가능</small>
+</div>
+<input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg" />
+
+<div class="recent-uploads">
+  <h2>최근 업로드</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>파일명</th>
+        <th>상태</th>
+        <th>업로드 시각</th>
+      </tr>
+    </thead>
+    <tbody id="upload-rows"></tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const dropzone = document.getElementById("dropzone");
+  const fileInput = document.getElementById("file-input");
+  const rowsBody = document.getElementById("upload-rows");
+
+  function addRow(documentId, fileName, status, createdAtLabel) {
+    const existing = document.getElementById(`row-${documentId}`);
+    if (existing) existing.remove();
+
+    const row = document.createElement("tr");
+    row.id = `row-${documentId}`;
+    row.innerHTML = `
+      <td>${fileName}</td>
+      <td class="status-cell">${statusBadgeHtml(status)}</td>
+      <td>${createdAtLabel}</td>
+    `;
+    rowsBody.prepend(row);
+  }
+
+  function updateRowStatus(documentId, data) {
+    const row = document.getElementById(`row-${documentId}`);
+    if (!row) return;
+    row.querySelector(".status-cell").innerHTML = statusBadgeHtml(data.status);
+  }
+
+  async function uploadFile(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    const res = await fetch("/documents/upload", { method: "POST", body: formData });
+    if (!res.ok) {
+      alert(`업로드 실패: ${file.name}`);
+      return;
+    }
+    const data = await res.json();
+    addRow(data.document_id, file.name, data.status, "방금 전");
+    pollDocumentStatus(data.document_id, (statusData) =>
+      updateRowStatus(data.document_id, statusData)
+    );
+  }
+
+  function handleFiles(fileList) {
+    Array.from(fileList).forEach(uploadFile);
+  }
+
+  dropzone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => handleFiles(e.target.files));
+
+  ["dragenter", "dragover"].forEach((evt) =>
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.add("dragover");
+    })
+  );
+  ["dragleave", "drop"].forEach((evt) =>
+    dropzone.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropzone.classList.remove("dragover");
+    })
+  );
+  dropzone.addEventListener("drop", (e) => handleFiles(e.dataTransfer.files));
+
+  async function loadRecentUploads() {
+    const res = await fetch("/documents?page=1&page_size=5");
+    if (!res.ok) return;
+    const data = await res.json();
+    data.items
+      .slice()
+      .reverse()
+      .forEach((item) => {
+        addRow(
+          item.document_id,
+          item.file_name,
+          item.status,
+          new Date(item.created_at).toLocaleString()
+        );
+        if (!TERMINAL_STATUSES.includes(item.status)) {
+          pollDocumentStatus(item.document_id, (statusData) =>
+            updateRowStatus(item.document_id, statusData)
+          );
+        }
+      });
+  }
+
+  loadRecentUploads();
+</script>
+{% endblock %}

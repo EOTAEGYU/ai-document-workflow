@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %}AI Document Workflow{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css" />
+  </head>
+  <body>
+    <nav>
+      <span class="brand">📄 AI Document Workflow</span>
+      <a href="/ui/upload" class="{% if active_nav == 'upload' %}active{% endif %}">업로드</a>
+      <a href="/ui/documents" class="{% if active_nav == 'documents' %}active{% endif %}">문서 목록</a>
+    </nav>
+    <main>{% block content %}{% endblock %}</main>
+    <script src="/static/app.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

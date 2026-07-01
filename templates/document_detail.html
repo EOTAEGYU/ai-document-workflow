@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}{{ document.file_name }} - AI Document Workflow{% endblock %}
+
+{% block content %}
+<h1>{{ document.file_name }}</h1>
+<div class="meta-bar">
+  <span class="badge badge-{{ document.status }}" id="status-badge">{{ document.status }}</span>
+  <span>{{ document.file_type }}</span>
+  <span>{{ document.page_count or '-' }}p</span>
+  <span>{{ (document.created_at | to_kst).strftime('%Y-%m-%d %H:%M') }}</span>
+  <a class="btn-download" href="/documents/{{ document.id }}/file" download>원본 다운로드</a>
+</div>
+
+{% if document.status == 'FAILED' and document.error_message %}
+<div class="error-box">{{ document.error_message }}</div>
+{% endif %}
+
+<div class="panel">
+  <h2>추출된 텍스트</h2>
+  <pre class="extracted-text" id="extracted-text">{{ document.extracted_text or '(아직 추출된 텍스트가 없습니다)' }}</pre>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const documentId = {{ document.id }};
+  const searchQuery = new URLSearchParams(window.location.search).get("q");
+  if (searchQuery) {
+    highlightMatches(document.getElementById("extracted-text"), searchQuery);
+  }
+
+  const currentStatus = "{{ document.status }}";
+  if (!TERMINAL_STATUSES.includes(currentStatus)) {
+    pollDocumentStatus(documentId, (data) => {
+      if (TERMINAL_STATUSES.includes(data.status)) {
+        window.location.reload();
+      } else {
+        document.getElementById("status-badge").outerHTML = statusBadgeHtml(data.status);
+      }
+    });
+  }
+</script>
+{% endblock %}
